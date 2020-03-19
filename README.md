@@ -47,7 +47,7 @@ Data Description:
 14,592 data points are being used for mining the data. The dataset was originally spread across 26 attributes. The dependent variable (output) is modeled around the merchant name, from where the user would acquire electronic goods. After cleaning, reducing and transforming the data, we model the dependent variable using 11 independent variables. These 11 independent variables comprise of the categorical nominal variable, Boolean variable, and numeric ratio scale as shown in table 1.
 
 
-	Name of Attribute	Type	Description
+Name of Attribute	Type	Description
 1	AmountMax	Numeric	The maximum selling price of a product.
 2	AmountMin	Numeric	The minimum selling price of a product.
 3	Condition	Categorical	The condition of the product that its being sold as. It can be new, refurbished and used.
@@ -309,16 +309,14 @@ plot(model)
 
 The summary of the model shows that the most used independent variables are prices.condition and prices.online.offline which are being used a 100% of the time. Other variables being used are prices.isavailable, prices.issale,prices.average,prices.shipping as shown in the figure 10. 
 
-
-The decision tree obtained after executing the above R code snippet is as shown:
+The decision tree obtained after executing the above R code snippet:
 As we see from the decision tree, node 4,8 and 15 are the only nodes which gives us a decision that an individual must be buying the electronic products from the local vendors, instead of going to flagship stores such as Walmart or best buy.
 
 Node 4 : When the product is not available online and the condition of the product is new or used.
 Node 8 : When the product is present online, and the condition is new. However, the product pricing is lower compared to the other products i.e. they are not expensive.
 Node 15 : When the product is present online, condition is new, the price is high, shipping is available, and the product is on sale.
 
-Our trained model is now tested with the 30 percent test dataset. We achieve ~ 74.5 % accuracy as seen in figure 
-
+Our trained model is now tested with the 30 percent test dataset. We achieve ~ 74.5 % accuracy.
 
 pred<- predict(model,newdata=test) 
 # Predict the dependent variable in the test dataset using the model learning
@@ -342,24 +340,23 @@ Along with this , we also calculate FPR and FNR based on sensitivity and specifi
 The R code used to calculate these metrics in R is as shown here:
 
 table(evaluation$prices.merchant, evaluation$pred) 
-# Confusion Matrix
+Confusion Matrix
 tpr_sensitivity<- sum(evaluation$pred == '0' & evaluation$prices.merchant == '0') / sum(evaluation$prices.merchant == '0')
-# Calculating sensitivity
+Calculating sensitivity
 tnr_specificity<-sum(evaluation$pred == '1' & evaluation$prices.merchant == '1')/ sum(evaluation$prices.merchant == '1')
-# Calculating specificity
+Calculating specificity
 FPR<-1 - tnr_specificity
-# Finding false positive rate
+Finding false positive rate
 FNR<-1 - tpr_sensitivity
-# Finding false negative rate
+Finding false negative rate
 dt_precision<-sum(evaluation$prices.merchant == '0' & evaluation$pred == '0') / sum(evaluation$pred == '0')
-# Calculating precision
+Calculating precision
 dt_recall<-sum(evaluation$prices.merchant == '0' & evaluation$pred == '0') / sum(evaluation$prices.merchant == '0')
-# Calculating the recall value
+Calculating the recall value
 F<-2 * dt_precision * dt_recall / (dt_precision + dt_recall)
-# Calculating the F score
+Calculating the F score
 
 From execution we get the following values for the metrics:
-
 tpr_sensitivity : 77.12%
 tnr_specificity : 71.19%
 fpr : 28.80%
@@ -371,17 +368,17 @@ f-score : 77.57%
 We also evaluate the model using AUC - ROC curve, which is a performance measurement for classification problem at various thresholds settings. ROC is a probability curve and AUC represent degree or measure of separability. It tells how much model is capable of distinguishing between classes. Higher the AUC, better the model is at predicting. The code used in R is as shown here:
 
 library(pROC)
-# Library used to plot the roc
+Library used to plot the roc
 reg <- glm(prices.merchant ~ prices.isAvailable+prices.isSale+prices.online.offline+prices.shipping+brand+prices.average+prices.condition , data = train, family = binomial() )
 summary(reg)
-# Summarizing dataframe reg
+Summarizing dataframe reg
 evaluation <- test
 evaluation$prob <- predict(reg, newdata = evaluation, type = "response")
 g <- roc(evaluation$prices.merchant ~ evaluation$prob, data = evaluation)
 plot(g)
-# Plotting the roc curve
+Plotting the roc curve
 auc(g)
-# Calculating the area under the curve
+Calculating the area under the curve
 
 From the AUC-ROC curve, we find the area under the curve to be 0.806 which is closer to 1, hence showing that the model can predict the dependent variable based on the independent variables to a large extent.
 
